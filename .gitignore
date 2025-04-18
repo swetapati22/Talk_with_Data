@@ -1,0 +1,39 @@
+# Node (React) dependencies
+/frontend/node_modules/
+frontend/package-lock.json
+
+# Python virtual environments
+venv/
+env/
+*.pyc
+__pycache__/
+
+# Python dependencies and cache
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.log
+
+# VSCode & JetBrains
+.vscode/
+.idea/
+
+# Environment variables
+.env
+/backend/.env
+
+# Output files
+*.png
+*.jpg
+*.jpeg
+
+# Jupyter (if used)
+.ipynb_checkpoints/
+
+# Mac/Linux/Windows system files
+.DS_Store
+Thumbs.db
+
+# Flask instance folder (if created)
+instance/
