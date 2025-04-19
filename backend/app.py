@@ -1,21 +1,23 @@
 import matplotlib
 matplotlib.use('Agg')
 
-from flask import Flask, request, render_template_string
+from flask import Flask, request, jsonify, render_template_string
 import pandas as pd
 from dotenv import load_dotenv
-import os
 import matplotlib.pyplot as plt
 import seaborn as sns
 import io
+import os
 import base64
 import google.generativeai as genai
+from flask_cors import CORS
 
 # Load .env variables
 load_dotenv()
 
 # Setup Flask
 app = Flask(__name__)
+CORS(app)
 
 # Configure Gemini
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -55,6 +57,7 @@ def home():
     return render_template_string(UPLOAD_FORM.format(output=""))
 
 @app.route('/upload', methods=['POST'])
+@app.route('/analyze', methods=['POST'])
 def upload():
     file = request.files.get('file')
     if not file:
