@@ -2,3 +2,5 @@ flask
 pandas
 matplotlib
 google-generativeai
+seaborn
+python-dotenv
