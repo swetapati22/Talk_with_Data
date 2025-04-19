@@ -6,12 +6,12 @@ import pandas as pd
 from dotenv import load_dotenv
 import os
 import matplotlib.pyplot as plt
-from dotenv import load_dotenv
+import seaborn as sns
 import io
-import os
 import base64
 import google.generativeai as genai
 
+# Load environment variables
 load_dotenv()
 
 # Setup Flask
@@ -19,10 +19,10 @@ app = Flask(__name__)
 
 # Configure Gemini API
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=GEMINI_API_KEY)  # Replace with your real key
+genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.0-flash")
 
-# Upload form
+# HTML Upload Form
 UPLOAD_FORM = '''
 <!doctype html>
 <title>Upload CSV</title>
@@ -43,45 +43,68 @@ def upload():
     if not file:
         return "No file uploaded", 400
 
-    # Load CSV into pandas DataFrame
     df = pd.read_csv(file)
-
-    # Generate sample preview
     sample = df.head(50).to_string(index=False)
     columns = df.columns.tolist()
 
-    # Create prompt for Gemini
+    # Updated prompt to ask for multiple visualizations
     prompt = f"""
-    I have a CSV dataset with the following columns: {columns}
+I have a CSV dataset with the following columns: {columns}
 
-    Here are the first 50 rows:
-    {sample}
+Here are the first 50 rows:
+{sample}
 
-    Please generate Python code that uses matplotlib or seaborn to create one meaningful visualization based on the dataset. 
-    Assume the dataset is already loaded in a DataFrame called 'df'.
-    Do not include markdown formatting or explanations. Just return clean Python code.
-    """
+Please generate 5 different Python code snippets using matplotlib or seaborn, each showing a different and meaningful visualization based on this dataset. 
+Assume the dataset is already loaded in a DataFrame called 'df'.
+Do not include markdown formatting or explanations — only the raw Python code for each plot. Separate each code snippet clearly.
+"""
 
     try:
-        # Request response from Gemini model
         response = model.generate_content(prompt)
-        code_string = response.text.strip("```python").strip("```")
+        raw_response = response.text
 
-        # Execute the code safely
-        local_vars = {'df': df, 'plt': plt}
-        exec(code_string, {}, local_vars)
+        # Split response into individual code blocks
+        code_blocks = [blk for blk in raw_response.strip().split("```python") if blk.strip()]
+        visualizations = []
+        
+        for code in code_blocks:
+            # Extract code portion
+            if "```" in code:
+                code = code.split("```")[0]
+            code = code.strip()
+            if not code:
+                continue
 
-        # Save the generated plot
-        buf = io.BytesIO()
-        plt.savefig(buf, format='png')
-        plt.clf()
-        buf.seek(0)
-        image_base64 = base64.b64encode(buf.read()).decode('utf-8')
+            # Clear previous plot
+            plt.clf()
 
-        # Return image and generated code
-        img_html = f'<img src="data:image/png;base64,{image_base64}" style="max-width:100%;"/><br>'
-        code_html = f"<h2>Generated Code:</h2><pre>{code_string}</pre>"
-        return img_html + code_html
+            # Provide both plt and sns in exec context
+            local_vars = {'df': df, 'plt': plt, 'sns': sns}
+            try:
+                exec(code, {}, local_vars)
+
+                # Save plot to image buffer
+                buf = io.BytesIO()
+                plt.savefig(buf, format='png')
+                buf.seek(0)
+                image_base64 = base64.b64encode(buf.read()).decode('utf-8')
+
+                visualizations.append({'image': image_base64, 'code': code})
+
+            except Exception as plot_error:
+                visualizations.append({'image': '', 'code': f"# Failed to execute code:\n{code}\n# Error: {plot_error}"})
+
+        # Render all plots and code in HTML
+        html_output = ''
+        for i, viz in enumerate(visualizations, start=1):
+            if viz['image']:
+                html_output += f"<h3>Visualization {i}</h3>"
+                html_output += f"<img src='data:image/png;base64,{viz['image']}' style='max-width:100%;'/><br>"
+            else:
+                html_output += f"<h3>Visualization {i} - Error generating image</h3>"
+            html_output += f"<pre>{viz['code']}</pre>"
+
+        return html_output
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
