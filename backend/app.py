@@ -32,18 +32,52 @@ UPLOAD_FORM = '''
 <head>
   <title>Gemini AI Visualizations</title>
   <style>
-    body {{ font-family: Arial; padding: 40px; background: #f9f9f9; color: #333; }}
-    h1 {{ color: #2c3e50; }}
+    body {{
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+      background: linear-gradient(to bottom right, #ffecd2, #fcb69f);
+      color: #333;
+    }}
+    h1 {{ color: #2c3e50; text-align: center; }}
     h3 {{ color: #34495e; }}
     img {{ border: 1px solid #ccc; margin-bottom: 10px; max-width: 100%; }}
-    pre {{ background: #f4f4f4; padding: 10px; border-left: 4px solid #3498db; overflow-x: auto; }}
-    .viz-block {{ background: white; padding: 20px; border-radius: 10px; margin-bottom: 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }}
+    pre {{
+      background: #f4f4f4;
+      padding: 10px;
+      border-left: 4px solid #3498db;
+      overflow-x: auto;
+      border-radius: 5px;
+    }}
+    .viz-block {{
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      margin: 40px auto;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+      max-width: 900px;
+    }}
     .error {{ color: red; font-style: italic; }}
-    .upload-form {{ margin-bottom: 30px; }}
+    .upload-form {{
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }}
+    .upload-form input[type="submit"] {{
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }}
+    .upload-form input[type="file"] {{
+      padding: 6px;
+    }}
   </style>
 </head>
 <body>
-  <h1>📊 Gemini AI Visualizations</h1>
+  <h1>📊 CSV Visualization Generator</h1>
   <form method="post" enctype="multipart/form-data" action="/analyze" class="upload-form">
     <input type="file" name="file" required>
     <input type="submit" value="Upload CSV & Generate Plots">
@@ -87,7 +121,7 @@ Rules:
 2. The remaining 4 plots should be diverse — such as barplots, lineplots, boxplots, scatter, histograms — depending on what makes sense from this data.
 3. Use ONLY column names that appear in the dataset. DO NOT use placeholders like 'col1', 'col2', etc.
 4. For each visualization:
-   - Provide a short 2-line summary starting with 'Summary:'
+   - Provide a short summary starting with 'Summary:' and include two concise, meaningful insights (separated by a period or semicolon).
    - Then return ONLY the valid raw Python code (no markdown formatting, no ``` backticks).
 5. Assume the DataFrame is already loaded as 'df'.
 
@@ -98,18 +132,16 @@ Respond with plain text.
         response = model.generate_content(prompt)
         full_response = response.text.strip()
 
-        # Split based on 'Summary:' and keep only valid blocks
         blocks = re.split(r"\n*Summary:\s*", full_response)
         visualizations = []
 
-        for block in blocks[1:]:  # Skip first part before first Summary
+        for block in blocks[1:]:
             if not block.strip():
                 continue
 
             lines = block.strip().splitlines()
             summary = lines[0].strip()
 
-            # Remove junk lines, markdown formatting, or anything before real code
             code_start = 0
             for i, line in enumerate(lines[1:], start=1):
                 if line.strip().startswith(('df.', 'plt.', 'sns.', 'fig', 'ax', 'import', 'for', 'if')):
@@ -118,8 +150,6 @@ Respond with plain text.
 
             code_lines = lines[code_start:]
             code = "\n".join([line.strip("` ").replace("```", "") for line in code_lines if line.strip()])
-
-            # Ensure proper indentation
             code = "\n".join(code_lines)
 
             try:
@@ -166,7 +196,7 @@ Respond with plain text.
         for i, viz in enumerate(visualizations, start=1):
             html_output += f"<div class='viz-block'>"
             html_output += f"<h3>Visualization {i}</h3>"
-            html_output += f"<p>{viz['summary']}</p>"
+            html_output += f"<p><strong>Summary:</strong> {viz['summary']}</p>"
             if viz['image']:
                 html_output += f"<img src='data:image/png;base64,{viz['image']}'><br>"
             else:
