@@ -3,6 +3,8 @@ matplotlib.use('Agg')
 
 from flask import Flask, request, jsonify, render_template_string
 import pandas as pd
+from dotenv import load_dotenv
+import os
 import matplotlib.pyplot as plt
 from dotenv import load_dotenv
 import io

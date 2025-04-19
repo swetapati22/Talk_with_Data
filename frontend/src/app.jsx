@@ -19,7 +19,7 @@ function App() {
       setImage(`data:image/png;base64,${response.data.image}`);
       setCode(response.data.code);
     } catch (err) {
-      setError("Something went wrong: " + err.response?.data?.error || err.message);
+      setError("Something went wrong: " + (err.response?.data?.error || err.message));
     } finally {
       setLoading(false);
     }
