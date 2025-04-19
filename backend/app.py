@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify
 import pandas as pd
+from dotenv import load_dotenv
+import os
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -9,7 +11,7 @@ import google.generativeai as genai
 app = Flask(__name__)
 
 # Configure Gemini API
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
+genai.configure(api_key="GEMINI_API_KEY")
 model = genai.GenerativeModel("gemini-pro")
 
 @app.route('/analyze', methods=['POST'])
