@@ -16,22 +16,31 @@ function App() {
       setError("Please select a CSV file to upload.");
       return;
     }
-
+  
     setLoading(true);
     setError("");
+    setVisualizations([]); // Clear previous state
     const formData = new FormData();
     formData.append("file", file);
-
+  
     try {
-      const response = await axios.post("http://localhost:5000/analyze", formData);
-      setVisualizations(response.data.visualizations);
+      const response = await axios.post("http://localhost:5000/analyze", formData, {
+        headers: { 'Accept': 'application/json' }
+      });
+      console.log("🔎 Full server response:", response.data);
+      const visuals = response.data.visualizations;
+      if (Array.isArray(visuals)) {
+        setVisualizations(visuals);
+      } else {
+        throw new Error("Invalid response format from server.");
+      }
     } catch (err) {
+      console.error("❌ Server error:", err);
       setError("Something went wrong: " + (err.response?.data?.error || err.message));
-    } finally {
-      setLoading(false);
     }
   };
-
+    
+  
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem" }}>
       <h1>📊 CSV Visualization Generator</h1>

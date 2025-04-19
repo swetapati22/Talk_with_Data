@@ -11,6 +11,7 @@ import os
 import base64
 import google.generativeai as genai
 from flask_cors import CORS
+import re
 
 # Load .env variables
 load_dotenv()
@@ -43,7 +44,7 @@ UPLOAD_FORM = '''
 </head>
 <body>
   <h1>📊 Gemini AI Visualizations</h1>
-  <form method="post" enctype="multipart/form-data" action="/upload" class="upload-form">
+  <form method="post" enctype="multipart/form-data" action="/analyze" class="upload-form">
     <input type="file" name="file" required>
     <input type="submit" value="Upload CSV & Generate Plots">
   </form>
@@ -56,12 +57,15 @@ UPLOAD_FORM = '''
 def home():
     return render_template_string(UPLOAD_FORM.format(output=""))
 
-@app.route('/upload', methods=['POST'])
 @app.route('/analyze', methods=['POST'])
-def upload():
+def analyze():
     file = request.files.get('file')
     if not file:
-        return render_template_string(UPLOAD_FORM.format(output="<p class='error'>No file uploaded.</p>"))
+        error_msg = "<p class='error'>No file uploaded.</p>"
+        if request.accept_mimetypes['application/json'] > request.accept_mimetypes['text/html']:
+            return jsonify({'error': 'No file uploaded'}), 400
+        else:
+            return render_template_string(UPLOAD_FORM.format(output=error_msg))
 
     df = pd.read_csv(file)
     sample = df.head(50).to_string(index=False)
@@ -94,31 +98,44 @@ Respond with plain text.
         response = model.generate_content(prompt)
         full_response = response.text.strip()
 
-        blocks = full_response.split("Summary:")
+        # Split based on 'Summary:' and keep only valid blocks
+        blocks = re.split(r"\n*Summary:\s*", full_response)
         visualizations = []
 
-        for block in blocks[1:]:
-            summary_line, *code_lines = block.strip().split("\n")
-            summary = summary_line.strip()
-            code = "\n".join([line for line in code_lines if line.strip()])
+        for block in blocks[1:]:  # Skip first part before first Summary
+            if not block.strip():
+                continue
+
+            lines = block.strip().splitlines()
+            summary = lines[0].strip()
+
+            # Remove junk lines, markdown formatting, or anything before real code
+            code_start = 0
+            for i, line in enumerate(lines[1:], start=1):
+                if line.strip().startswith(('df.', 'plt.', 'sns.', 'fig', 'ax', 'import', 'for', 'if')):
+                    code_start = i
+                    break
+
+            code_lines = lines[code_start:]
+            code = "\n".join([line.strip("` ").replace("```", "") for line in code_lines if line.strip()])
+
+            # Ensure proper indentation
+            code = "\n".join(code_lines)
 
             try:
                 plt.clf()
                 local_vars = {'df': df, 'plt': plt, 'sns': sns}
 
-                # Attempt execution
                 try:
                     exec(code, {}, local_vars)
                 except Exception as exec_error:
-                    # Try fallback for heatmap
                     if 'heatmap' in code and 'df.corr()' in code:
                         fixed_code = code.replace("df.corr()", "df.select_dtypes(include='number').corr()")
                         exec(fixed_code, {}, local_vars)
-                        code = fixed_code  # Update to show the fallback code
+                        code = fixed_code
                     else:
                         raise exec_error
 
-                # Capture plot
                 buf = io.BytesIO()
                 fig = plt.gcf()
                 fig.tight_layout()
@@ -142,7 +159,9 @@ Respond with plain text.
                     'error': str(e)
                 })
 
-        # Build HTML output
+        if request.accept_mimetypes['application/json'] > request.accept_mimetypes['text/html']:
+            return jsonify({'visualizations': visualizations})
+
         html_output = ""
         for i, viz in enumerate(visualizations, start=1):
             html_output += f"<div class='viz-block'>"
@@ -158,7 +177,16 @@ Respond with plain text.
         return render_template_string(UPLOAD_FORM.format(output=html_output))
 
     except Exception as e:
-        return render_template_string(UPLOAD_FORM.format(output=f"<p class='error'>Unexpected error: {e}</p>"))
+        if request.accept_mimetypes['application/json'] > request.accept_mimetypes['text/html']:
+            return jsonify({'error': f'Unexpected error: {str(e)}'}), 500
+        else:
+            return render_template_string(UPLOAD_FORM.format(
+                output=f"<p class='error'>Unexpected error: {e}</p>"
+            ))
+
+@app.route('/routes')
+def show_routes():
+    return jsonify([str(rule) for rule in app.url_map.iter_rules()])
 
 if __name__ == '__main__':
     app.run(debug=True)
