@@ -4,13 +4,13 @@
 
 ---
 
-## 🌟 Inspiration
+## Inspiration
 
 We noticed that many students and professionals struggle to interpret raw CSV files. Creating visualizations often requires programming knowledge, which can be a barrier. Our goal: make data analysis as simple as dragging and dropping a file.
 
 ---
 
-## 🚀 What It Does
+## What It Does
 
 - Upload a **CSV file** to receive **intelligent visualizations** (e.g. heatmaps, bar charts, scatter plots).
 - Each visualization includes a **summary**, **AI-generated plot**, and the **Python code** used to create it.
@@ -18,7 +18,7 @@ We noticed that many students and professionals struggle to interpret raw CSV fi
 
 ---
 
-## 🧱 How We Built It
+## How We Built It
 
 - **Frontend**: Built with **React.js**, allowing CSV upload and dynamic display of charts and code.
 - **Backend**: Powered by **Flask**, uses **Matplotlib** and **Seaborn** to create plots and return them as base64-encoded images.
@@ -27,7 +27,7 @@ We noticed that many students and professionals struggle to interpret raw CSV fi
 
 ---
 
-## 🧗 Challenges We Overcame
+## Challenges We Overcame
 
 - Handling **CORS issues** between the frontend and backend.
 - Parsing inconsistent or messy **real-world CSV data**.
@@ -36,7 +36,7 @@ We noticed that many students and professionals struggle to interpret raw CSV fi
 
 ---
 
-## ✅ Accomplishments
+## Accomplishments
 
 - Created a **zero-code interface** for high-quality data insights.
 - Built a complete pipeline from file upload to AI-generated visual outputs.
@@ -44,24 +44,7 @@ We noticed that many students and professionals struggle to interpret raw CSV fi
 
 ---
 
-## 📚 What We Learned
-
-- Effective **frontend-backend communication** for file handling and visualization delivery.
-- AI prompt engineering for **code generation and context understanding**.
-- Techniques to manage and visualize **edge-case data scenarios** gracefully.
-
----
-
-## 🔮 What’s Next
-
-- 💬 Natural language questions like “Which country has the highest revenue?”
-- 📂 Support for **Excel** and **JSON** formats.
-- 🎨 Customization options for users to tweak chart types and styles.
-- ☁️ Cloud deployment with **team sharing & collaboration features**.
-
----
-
-## 🛠️ Built With
+## Built With
 
 - **Frontend**: React.js
 - **Backend**: Flask (Python), CORS
@@ -70,7 +53,7 @@ We noticed that many students and professionals struggle to interpret raw CSV fi
 
 ---
 
-## 🧪 Getting Started
+## Getting Started
 
 1. Start Flask backend (in `/backend`):
    ```bash
