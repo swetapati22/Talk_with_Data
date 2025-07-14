@@ -78,15 +78,6 @@ Make sure your Flask server is running at `http://localhost:5000`.
 
 ---
 
-## Future Plans
-
-* 💬 Add **natural language querying** (e.g., "Which product has the highest sales?")
-* 📂 Support **Excel and JSON** formats
-* 🎛️ Let users **customize charts and download code**
-* ☁️ Deploy to the cloud with **multi-user collaboration**
-
----
-
 ## Project Structure (Optional)
 
 ```
