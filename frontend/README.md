@@ -58,7 +58,7 @@ We noticed that many students and professionals struggle to interpret raw CSV fi
 1. Start Flask backend (in `/backend`):
    ```bash
    python app.py
-````
+   ````
 
 2. Run React frontend (in `/frontend`):
 
