@@ -1,70 +1,85 @@
-# Getting Started with Create React App
+# 📊 TalkWithData: AI-Powered CSV Visualization Generator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**TalkWithData** simplifies data exploration for everyone — no coding needed. Upload a CSV file and instantly see context-aware charts and the code that generated them, all powered by AI.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🌟 Inspiration
 
-### `npm start`
+We noticed that many students and professionals struggle to interpret raw CSV files. Creating visualizations often requires programming knowledge, which can be a barrier. Our goal: make data analysis as simple as dragging and dropping a file.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🚀 What It Does
 
-### `npm test`
+- Upload a **CSV file** to receive **intelligent visualizations** (e.g. heatmaps, bar charts, scatter plots).
+- Each visualization includes a **summary**, **AI-generated plot**, and the **Python code** used to create it.
+- Uses **Google Gemini AI** to understand data context and generate meaningful visual insights.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 🧱 How We Built It
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Frontend**: Built with **React.js**, allowing CSV upload and dynamic display of charts and code.
+- **Backend**: Powered by **Flask**, uses **Matplotlib** and **Seaborn** to create plots and return them as base64-encoded images.
+- **AI Integration**: Utilized **Google Gemini AI** to suggest the most relevant visualizations.
+- **Communication**: Configured **CORS** to ensure seamless interaction between frontend and backend.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🧗 Challenges We Overcame
 
-### `npm run eject`
+- Handling **CORS issues** between the frontend and backend.
+- Parsing inconsistent or messy **real-world CSV data**.
+- Ensuring **AI-generated Python code** is executable and safe.
+- Maintaining a smooth UX even with **large file uploads**.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## ✅ Accomplishments
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Created a **zero-code interface** for high-quality data insights.
+- Built a complete pipeline from file upload to AI-generated visual outputs.
+- Delivered a visually pleasing and accessible app experience.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+---
 
-## Learn More
+## 📚 What We Learned
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Effective **frontend-backend communication** for file handling and visualization delivery.
+- AI prompt engineering for **code generation and context understanding**.
+- Techniques to manage and visualize **edge-case data scenarios** gracefully.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🔮 What’s Next
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- 💬 Natural language questions like “Which country has the highest revenue?”
+- 📂 Support for **Excel** and **JSON** formats.
+- 🎨 Customization options for users to tweak chart types and styles.
+- ☁️ Cloud deployment with **team sharing & collaboration features**.
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🛠️ Built With
 
-### Making a Progressive Web App
+- **Frontend**: React.js
+- **Backend**: Flask (Python), CORS
+- **AI**: Google Gemini
+- **Visualization**: Matplotlib, Seaborn
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## 🧪 Getting Started
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+1. Start Flask backend (in `/backend`):
+   ```bash
+   python app.py
+````
 
-### Deployment
+2. Run React frontend (in `/frontend`):
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+   ```bash
+   npm install
+   npm run start
+   ```
